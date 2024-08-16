@@ -6,7 +6,18 @@ import requests
 
 def get_response(response: requests.Response) -> List[str]:
     data = json.loads(response.content)
-    return data["text"]
+    if (data.get("text")):
+       return data["text"]
+    else: # is it a response from complete()
+       if (data.get("object")):
+           if (data["object"] == "text_completion"):
+              # return the choices
+              choices = [ ]
+              for c in data["choices"]:
+                  choices += [c["text"]]
+              return choices
+    raise TypeError("Unexpected data: ", data)
+
 
 
 def post_http_request(
